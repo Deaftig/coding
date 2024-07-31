@@ -27,8 +27,6 @@ SnakeGame/
 
 */
 
-
-
 #include "globals.h"
 #include "menu.h"               // Inkludieren der Datei "menu.h"
 #include "game.h"               // Inkludieren der Datei "game.h"
