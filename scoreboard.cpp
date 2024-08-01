@@ -13,21 +13,15 @@ Scoreboard::Scoreboard()
         std::cerr << "Fehler beim Laden der Schriftart" << std::endl;
     }
 
-    initText(scoreboardText, "", 30, gb::LIGHT_BLUE, sf::Vector2f(400, 50));
-    initText(deleteText, "Drücke Enter zum Löschen der Highscores", 30, gb::LIGHT_BLUE, sf::Vector2f(400, 550));
-    initText(highscoreText, "Highscores", 50, gb::LIGHT_BLUE, sf::Vector2f(400, 10));
+    initText(scoreboardText, "", 30, gb::cTextOn, sf::Vector2f(400, 50));
+    initText(deleteText, "Drücke Enter zum Löschen der Highscores", 30, gb::cTextOn, sf::Vector2f(400, 550));
+    initText(highscoreText, "Highscores", 50, gb::cTextOn, sf::Vector2f(400, 10));
 
     loadScores();
 }
 
-Scoreboard::~Scoreboard()
-{
-
-}
-
 void Scoreboard::render(sf::RenderWindow& window) {
-    window.clear(gb::DARK_BLUE);
-
+    window.clear(gb::cBackground);
     window.draw(highscoreText);
 
     if (displayingScores) {

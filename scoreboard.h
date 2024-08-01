@@ -9,7 +9,6 @@
 class Scoreboard {
 public:
     Scoreboard();
-    ~Scoreboard();
     void render(sf::RenderWindow& window);
     int handleInput(sf::Event& event);
     void loadScores();

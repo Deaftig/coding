@@ -5,13 +5,21 @@
 namespace gb
 {
 	// Farben
-	const sf::Color RED(200, 29, 37);
-	const sf::Color GREEN(52, 98, 63);
-	const sf::Color LIGHT_BLUE(191, 215, 234);
-	const sf::Color DARK_BLUE(11, 57, 84);
-	const sf::Color TURQUOISE(8, 126, 139);
-	const sf::Color LIGHT_RED(255, 90, 95);
-	const sf::Color GRAY_SHADE(50, 50, 50, 255);
+	// Frucht
+	const sf::Color cFruit(202, 83, 51);
+	// Schrift
+	const sf::Color cTextOff(200, 200, 200);
+	const sf::Color cTextOn(255, 255, 255);
+	// Schlange
+	const sf::Color cSnake(94, 115, 223, 255);
+	// Farbschema
+	const sf::Color cBackground(51, 70, 118, 255);
+	const sf::Color cSecondary(66, 91, 157, 255);
+	//Arena
+	const sf::Color cArena1(188, 206, 244, 255);
+	const sf::Color cArena2(173, 195, 239, 255);
+	//Schatten
+	const sf::Color cShade(50, 50, 50, 10);
 
 	// Fenstergröße
 	const int winWidth = 600;

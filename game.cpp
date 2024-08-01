@@ -12,57 +12,59 @@ const int arenaHeight = 20;
 
 Game::Game()
     : fruit(-1, -1), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
-    updateInterval(10.0f), timeSinceLastUpdate(0.0f) { // Updateintervall für angepasste Geschwindigkeit
+    updateInterval(10.0f), timeSinceLastUpdate(0.0f){ // Updateintervall für angepasste Geschwindigkeit
 
     if (!font.loadFromFile("Fonts/Dimbo Regular.ttf")) {
         std::cerr << "Fehler beim Laden der Schriftart" << std::endl;
     }
 
     // Korrigierte Position für den Punktestand
-    initText(scoreText, "Punkte: 0", 30, gb::LIGHT_BLUE, sf::Vector2f(800, 20));
+    initText(scoreText, "Punkte: 0", 30, gb::cTextOn, sf::Vector2f(800, 20));
 
-    initText(nameInputText, "Name: ", 30, gb::LIGHT_BLUE, sf::Vector2f(512, 400)); // Zentriert im Namenseingabe-Fenster
+    initText(nameInputText, "Name: ", 30, gb::cTextOn, sf::Vector2f(gb::winWidth/2, gb::winHeight/2)); // Zentriert im Namenseingabe-Fenster
+    initText(nameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight * 0.4));
 
-    initText(endGameText, "", 50, gb::LIGHT_BLUE, sf::Vector2f(512, 384)); // Zentriert im Endspiel-Fenster
+    initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth/2, gb::winHeight/2)); // Zentriert im Endspiel-Fenster
 
     snakeShape.setSize(sf::Vector2f(blockSize, blockSize));
-    snakeShape.setFillColor(gb::GREEN);
+    snakeShape.setFillColor(gb::cSnake);
 
     fruitShape.setSize(sf::Vector2f(blockSize, blockSize));
-    fruitShape.setFillColor(gb::RED);
+    fruitShape.setFillColor(gb::cFruit);
 
     reset();
 }
 
-Game::~Game()
+void Game::render(sf::RenderWindow& window)
 {
-}
-
-void Game::render(sf::RenderWindow& window) {
-    if (enteringName) {
+    if (enteringName)
+    {
         // Hintergrundfarbe für das Namenseingabe-Fenster
-        window.clear(gb::DARK_BLUE); // Hintergrundfarbe des Namenseingabe-Fensters
+        window.clear(gb::cBackground); // Hintergrundfarbe des Namenseingabe-Fensters
         window.draw(nameInputText);
     }
-    else if (gameOver) {
+    else if (gameOver)
+    {
         // Hintergrundfarbe für das Endspiel-Fenster
-        window.clear(gb::GRAY_SHADE); // Hintergrundfarbe des Endspiel-Fensters
+        window.clear(gb::cShade); // Hintergrundfarbe des Endspiel-Fensters
         window.draw(endGameText);
     }
-    else {
+    else
+    {
         // Hintergrundfarbe für das Spiel-Fenster
-        window.clear(gb::DARK_BLUE);
+        window.clear(gb::cBackground);
 
         // Arena zeichnen
         sf::RectangleShape arenaShape;
         arenaShape.setSize(sf::Vector2f(arenaWidth * blockSize, arenaHeight * blockSize)); // Größe der Arena ( ArenaBreite * BlockGrö0e, ArenaHöhe * BlockGröße )
         arenaShape.setPosition((gb::winWidth - arenaWidth * blockSize) / 2, (gb::winHeight - arenaHeight * blockSize) / 2); // 
-        arenaShape.setFillColor(gb::LIGHT_BLUE);
+        arenaShape.setFillColor(gb::cTextOn);
         window.draw(arenaShape);
 
         window.draw(scoreText);
 
-        for (const auto& segment : snake) {
+        for (const auto& segment : snake)
+        {
             snakeShape.setPosition(segment.x * blockSize, segment.y * blockSize);
             window.draw(snakeShape);
         }
@@ -74,30 +76,40 @@ void Game::render(sf::RenderWindow& window) {
     window.display();
 }
 
-int Game::handleInput(sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
-        if (enteringName) {
-            if (event.key.code == sf::Keyboard::Enter) {
-                if (!playerName.empty()) {
+int Game::handleInput(sf::Event& event)
+{
+    if (event.type == sf::Event::KeyPressed)
+    {
+        if (enteringName)
+        {
+            if (event.key.code == sf::Keyboard::Enter)
+            {
+                if (!playerName.empty())
+                {
                     enteringName = false;
                     isPlaying = true;
                     lastPlayerName = playerName;
                 }
             }
-            else if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty()) {
+            else if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
+            {
                 playerName.pop_back();
-                nameInputText.setString("Name: " + playerName);
+                nameText.setString(playerName);
             }
         }
-        else if (gameOver) {
-            if (event.key.code == sf::Keyboard::Enter) {
+        else if (gameOver)
+        {
+            if (event.key.code == sf::Keyboard::Enter)
+            {
                 reset();
             }
-            else if (event.key.code == sf::Keyboard::Escape) {
+            else if (event.key.code == sf::Keyboard::Escape)
+            {
                 return 0; // Zurück zum Menü
             }
         }
-        else {
+        else
+        {
             if (event.key.code == sf::Keyboard::W && direction != 2) direction = 0; // Up
             else if (event.key.code == sf::Keyboard::D && direction != 3) direction = 1; // Right
             else if (event.key.code == sf::Keyboard::S && direction != 0) direction = 2; // Down
@@ -105,10 +117,12 @@ int Game::handleInput(sf::Event& event) {
             else if (event.key.code == sf::Keyboard::Escape) return 0; // Zurück zum Menü
         }
     }
-    else if (event.type == sf::Event::TextEntered && enteringName) {
-        if (event.text.unicode < 128 && std::isprint(event.text.unicode)) {
+    else if (event.type == sf::Event::TextEntered && enteringName)
+    {
+        if (event.text.unicode < 128 && std::isprint(event.text.unicode))
+        {
             playerName += static_cast<char>(event.text.unicode);
-            nameInputText.setString("Name: " + playerName);
+            nameText.setString(playerName);
         }
     }
 
@@ -152,7 +166,7 @@ void Game::reset() {
     gameOver = false;
     enteringName = true;
     playerName = lastPlayerName;
-    nameInputText.setString("Name: " + playerName);
+    nameText.setString(playerName);
 }
 
 void Game::initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position) {

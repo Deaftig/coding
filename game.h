@@ -7,15 +7,16 @@
 #include <vector>
 #include <string>
 
-struct SnakeSegment {
+struct SnakeSegment
+{
     int x, y;
     SnakeSegment(int x, int y) : x(x), y(y) {}
 };
 
-class Game {
+class Game
+{
 public:
     Game();
-    ~Game();
     void render(sf::RenderWindow& window);
     int handleInput(sf::Event& event);
     void update();
@@ -31,6 +32,7 @@ private:
     sf::Font font;
     sf::Text scoreText;
     sf::Text nameInputText;
+    sf::Text nameText;
     sf::Text endGameText;
 
     sf::RectangleShape snakeShape;

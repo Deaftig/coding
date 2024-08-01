@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 
-class Menu {
+class Menu
+{
 public:
     Menu();
-    ~Menu();
     void render(sf::RenderWindow& window);
     int handleInput(sf::Event& event);
 
