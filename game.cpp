@@ -6,25 +6,24 @@
 #include <sstream>
 
 // Arena
-const int blockSize = 20;
-const int arenaWidth = 18;
-const int arenaHeight = 20;
+const int blockSize = 25;
+const int arenaWidth = 20;
+const int arenaHeight = 22;
 
 Game::Game()
     : fruit(-1, -1), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
-    updateInterval(10.0f), timeSinceLastUpdate(0.0f){ // Updateintervall für angepasste Geschwindigkeit
+    updateInterval(10.0f), timeSinceLastUpdate(0.0f) { // Updateintervall für angepasste Geschwindigkeit
 
     if (!font.loadFromFile("Fonts/Dimbo Regular.ttf")) {
         std::cerr << "Fehler beim Laden der Schriftart" << std::endl;
     }
 
     // Korrigierte Position für den Punktestand
-    initText(scoreText, "Punkte: 0", 30, gb::cTextOn, sf::Vector2f(800, 20));
+    initText(scoreText, "Punkte: 0", 30, gb::cTextOn, sf::Vector2f(50, 10));
 
-    initText(nameInputText, "Name: ", 30, gb::cTextOn, sf::Vector2f(gb::winWidth/2, gb::winHeight/2)); // Zentriert im Namenseingabe-Fenster
-    initText(nameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight * 0.4));
+    initText(nameInputText, "Name: \r\n", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Namenseingabe-Fenster
 
-    initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth/2, gb::winHeight/2)); // Zentriert im Endspiel-Fenster
+    initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Endspiel-Fenster
 
     snakeShape.setSize(sf::Vector2f(blockSize, blockSize));
     snakeShape.setFillColor(gb::cSnake);
@@ -54,21 +53,29 @@ void Game::render(sf::RenderWindow& window)
         // Hintergrundfarbe für das Spiel-Fenster
         window.clear(gb::cBackground);
 
-        // Arena zeichnen
-        sf::RectangleShape arenaShape;
-        arenaShape.setSize(sf::Vector2f(arenaWidth * blockSize, arenaHeight * blockSize)); // Größe der Arena ( ArenaBreite * BlockGrö0e, ArenaHöhe * BlockGröße )
-        arenaShape.setPosition((gb::winWidth - arenaWidth * blockSize) / 2, (gb::winHeight - arenaHeight * blockSize) / 2); // 
-        arenaShape.setFillColor(gb::cTextOn);
-        window.draw(arenaShape);
+        // Arena (Chessboard) zeichnen
+        for (int y = 0; y < arenaHeight; ++y)
+        {
+            for (int x = 0; x < arenaWidth; ++x)
+            {
+                sf::RectangleShape block(sf::Vector2f(blockSize, blockSize));
+                block.setPosition((gb::winWidth - arenaWidth * blockSize) / 2 + x * blockSize, (gb::winHeight - arenaHeight * blockSize) / 2 + y * blockSize);
+                block.setFillColor((x + y) % 2 == 0 ? gb::cArena1 : gb::cArena2);
+                window.draw(block);
+            }
+        }
 
+        // Zeichne die Punktzahl
         window.draw(scoreText);
 
+        // Zeichne die Schlange
         for (const auto& segment : snake)
         {
             snakeShape.setPosition(segment.x * blockSize, segment.y * blockSize);
             window.draw(snakeShape);
         }
 
+        // Zeichne die Frucht
         fruitShape.setPosition(fruit.x * blockSize, fruit.y * blockSize);
         window.draw(fruitShape);
     }
@@ -94,7 +101,7 @@ int Game::handleInput(sf::Event& event)
             else if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
             {
                 playerName.pop_back();
-                nameText.setString(playerName);
+                nameInputText.setString("Name: \r\n" +playerName);
             }
         }
         else if (gameOver)
@@ -122,7 +129,7 @@ int Game::handleInput(sf::Event& event)
         if (event.text.unicode < 128 && std::isprint(event.text.unicode))
         {
             playerName += static_cast<char>(event.text.unicode);
-            nameText.setString(playerName);
+            nameInputText.setString("Name: \r\n" + playerName);
         }
     }
 
@@ -166,7 +173,7 @@ void Game::reset() {
     gameOver = false;
     enteringName = true;
     playerName = lastPlayerName;
-    nameText.setString(playerName);
+    nameInputText.setString("Name: \r\n" + playerName);
 }
 
 void Game::initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position) {
@@ -235,6 +242,3 @@ void Game::saveScore() {
         file.close();
     }
 }
-
-
-
