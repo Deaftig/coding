@@ -6,9 +6,9 @@
 #include <sstream>
 
 // Arena
-const int blockSize = 25;
-const int arenaWidth = 20;
-const int arenaHeight = 22;
+const int blockSize = 30;
+const int arenaWidth = 18;
+const int arenaHeight = 16;
 
 Game::Game()
     : fruit(-1, -1), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
@@ -21,14 +21,15 @@ Game::Game()
     // Korrigierte Position für den Punktestand
     initText(scoreText, "Punkte: 0", 30, gb::cTextOn, sf::Vector2f(50, 10));
 
-    initText(nameInputText, "Name: \r\n", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Namenseingabe-Fenster
+    initText(nameInputText, "Name: \n\r", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Namenseingabe-Fenster
+    initText(nameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2));
 
     initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Endspiel-Fenster
 
     snakeShape.setSize(sf::Vector2f(blockSize, blockSize));
     snakeShape.setFillColor(gb::cSnake);
 
-    fruitShape.setSize(sf::Vector2f(blockSize, blockSize));
+    fruitShape.setRadius(blockSize / 2);
     fruitShape.setFillColor(gb::cFruit);
 
     reset();
@@ -76,7 +77,7 @@ void Game::render(sf::RenderWindow& window)
         }
 
         // Zeichne die Frucht
-        fruitShape.setPosition(fruit.x * blockSize, fruit.y * blockSize);
+        fruitShape.setPosition((fruit.x * blockSize), (fruit.y * blockSize));
         window.draw(fruitShape);
     }
 
@@ -101,7 +102,7 @@ int Game::handleInput(sf::Event& event)
             else if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
             {
                 playerName.pop_back();
-                nameInputText.setString("Name: \r\n" +playerName);
+                nameInputText.setString("Name: \n\r" + playerName);
             }
         }
         else if (gameOver)
@@ -129,7 +130,7 @@ int Game::handleInput(sf::Event& event)
         if (event.text.unicode < 128 && std::isprint(event.text.unicode))
         {
             playerName += static_cast<char>(event.text.unicode);
-            nameInputText.setString("Name: \r\n" + playerName);
+            nameInputText.setString("Name: \n\r" + playerName);
         }
     }
 
@@ -173,7 +174,7 @@ void Game::reset() {
     gameOver = false;
     enteringName = true;
     playerName = lastPlayerName;
-    nameInputText.setString("Name: \r\n" + playerName);
+    nameInputText.setString("Name: \n\r" + playerName);
 }
 
 void Game::initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position) {

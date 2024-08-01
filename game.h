@@ -36,7 +36,7 @@ private:
     sf::Text endGameText;
 
     sf::RectangleShape snakeShape;
-    sf::RectangleShape fruitShape;
+    sf::CircleShape fruitShape;
 
     int score;
     int direction;
