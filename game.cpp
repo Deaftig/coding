@@ -1,252 +1,34 @@
-#include "globals.h"
-#include "game.h"
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
-Game::Game()
-    : fruit(0, 0), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
-    updateInterval(10.0f), timeSinceLastUpdate(0.0f) { // Updateintervall für angepasste Geschwindigkeit
-
-    if (!font.loadFromFile("Fonts/Dimbo Regular.ttf"))
-    {
-        std::cerr << "Fehler beim Laden der Schriftart" << std::endl;
-    }
-
-    // Korrigierte Position für den Punktestand
-    initText(scoreText, "Punkte: 0", 30, gb::cTextOn, sf::Vector2f(50, 10));
-
-    initText(nameInputText, "Name: \n\r", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5)); // Zentriert im Namenseingabe-Fenster
-    initText(nameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5));
-
-    initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5)); // Zentriert im Endspiel-Fenster
-
-    snakeShape.setSize(sf::Vector2f(gb::blockSize, gb::blockSize));
-    snakeShape.setFillColor(gb::cSnake);
-
-    fruitShape.setRadius(gb::blockSize * 0.5);
-    fruitShape.setFillColor(gb::cFruit);
-
-    reset();
-}
-
-void Game::render(sf::RenderWindow& window)
+#include <include.h>
+namespace gb
 {
-    if (enteringName)
-    {
-        // Hintergrundfarbe für das Namenseingabe-Fenster
-        window.clear(gb::cBackground); // Hintergrundfarbe des Namenseingabe-Fensters
-        window.draw(nameInputText);
-    }
-    else if (gameOver)
-    {
-        // Hintergrundfarbe für das Endspiel-Fenster
-        window.clear(gb::cShade); // Hintergrundfarbe des Endspiel-Fensters
-        window.draw(endGameText);
-    }
-    else
-    {
-        // Hintergrundfarbe für das Spiel-Fenster
-        window.clear(gb::cBackground);
+	// Farben
+	// Frucht
+	const sf::Color cFruit(202, 83, 51);
+	// Schrift
+	const sf::Color cTextOff(200, 200, 200);
+	const sf::Color cTextOn(255, 255, 255);
+	// Schlange
+	const sf::Color cSnake(94, 115, 223, 255);
+	// Farbschema
+	const sf::Color cBackground(51, 70, 118, 255);
+	const sf::Color cSecondary(66, 91, 157, 255);
+	//Arena
+	const sf::Color cArena1(188, 206, 244, 255);
+	const sf::Color cArena2(173, 195, 239, 255);
+	//Schatten
+	const sf::Color cShade(20, 20, 20, 10);
 
-        // Arena (Chessboard) zeichnen
-        for (int y = 0; y < gb::arenaHeight; ++y)
-        {
-            for (int x = 0; x < gb::arenaWidth; ++x)
-            {
-                sf::RectangleShape block(sf::Vector2f(gb::blockSize, gb::blockSize));
-                block.setPosition((gb::winWidth - gb::arenaWidth * gb::blockSize) / 2 + x * gb::blockSize, (gb::winHeight - gb::arenaHeight * gb::blockSize) / 1 + y * gb::blockSize);
-                block.setFillColor((x + y) % 2 == 0 ? gb::cArena1 : gb::cArena2);
-                window.draw(block);
-            }
-        }
+	// Fenstergröße
+	const int winWidth = 600;
+	const int winHeight = 600;
 
-        // Zeichne die Punktzahl
-        window.draw(scoreText);
-
-        // Zeichne die Schlange
-        for (const auto& segment : snake)
-        {
-            snakeShape.setPosition(segment.x * gb::blockSize, segment.y * gb::blockSize);
-            window.draw(snakeShape);
-        }
-
-        // Zeichne die Frucht
-        fruitShape.setPosition((fruit.x * gb::blockSize), (fruit.y * gb::blockSize));
-        window.draw(fruitShape);
-    }
-
-    window.display();
+	// Arena
+	const int blockSize = 30;
+	const int arenaWidth = 18;
+	const int arenaHeight = 16;
 }
 
-int Game::handleInput(sf::Event& event)
-{
-    if (event.type == sf::Event::KeyPressed)
-    {
-        if (enteringName)
-        {
-            if (event.key.code == sf::Keyboard::Enter)
-            {
-                if (!playerName.empty())
-                {
-                    enteringName = false;
-                    isPlaying = true;
-                    lastPlayerName = playerName;
-                }
-            }
-            else if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
-            {
-                playerName.pop_back();
-                nameInputText.setString("Name: \n\r" + playerName);
-            }
-        }
-        else if (gameOver)
-        {
-            if (event.key.code == sf::Keyboard::Enter)
-            {
-                reset();
-            }
-            else if (event.key.code == sf::Keyboard::Escape)
-            {
-                return 0; // Zurück zum Menü
-            }
-        }
-        else
-        {
-            if (event.key.code == sf::Keyboard::W && direction != 2) direction = 0; // Up
-            else if (event.key.code == sf::Keyboard::D && direction != 3) direction = 1; // Right
-            else if (event.key.code == sf::Keyboard::S && direction != 0) direction = 2; // Down
-            else if (event.key.code == sf::Keyboard::A && direction != 1) direction = 3; // Left
-            else if (event.key.code == sf::Keyboard::Escape) return 0; // Zurück zum Menü
-        }
-    }
-    else if (event.type == sf::Event::TextEntered && enteringName)
-    {
-        if (event.text.unicode < 128 && std::isprint(event.text.unicode))
-        {
-            playerName += static_cast<char>(event.text.unicode);
-            nameInputText.setString("Name: \n\r" + playerName);
-        }
-    }
-
-    return -1;
-}
-
-void Game::update() {
-    if (!isPlaying || gameOver) return;
-
-    timeSinceLastUpdate += 0.1f; // Simulate time elapsed
-
-    if (timeSinceLastUpdate >= updateInterval) {
-        timeSinceLastUpdate = 0.0f;
-        moveSnake();
-
-        if (checkCollision()) {
-            gameOver = true;
-            isPlaying = false;
-            saveScore();
-            endGameText.setString("Spiel beendet!\n\r " + playerName + ": " + std::to_string(score) + " Punkte \n\r Drücke Enter zum Neustart oder Escape zum Verlassen");
-            endGameText.setOrigin(endGameText.getLocalBounds().width / 2, endGameText.getLocalBounds().height / 2);
-        }
-
-        if (snake.front().x == fruit.x && snake.front().y == fruit.y) {
-            snake.push_back(SnakeSegment(fruit.x, fruit.y));
-            score += 1; // Einen Punkt pro Frucht
-            scoreText.setString("Punkte: " + std::to_string(score));
-            generateFruit();
-        }
-    }
-}
-
-void Game::reset() {
-    snake.clear();
-    snake.push_back(SnakeSegment(gb::arenaWidth / 2, gb::arenaHeight / 2));
-    direction = 0;
-    score = 0;
-    scoreText.setString("Punkte: 0");
-    generateFruit();
-    isPlaying = false;
-    gameOver = false;
-    enteringName = true;
-    playerName = lastPlayerName;
-    nameInputText.setString("Name: \n\r" + playerName);
-}
-
-void Game::initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position)
-{
-    text.setFont(font);
-    text.setString(string);
-    text.setCharacterSize(size);
-    text.setFillColor(color);
-    text.setPosition(position);
-    text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
-}
-
-void Game::moveSnake()
-{
-    for (int i = snake.size() - 1; i > 0; --i)
-    {
-        snake[i] = snake[i - 1];
-    }
-
-    if (direction == 0) snake[0].y -= 1;
-    else if (direction == 1) snake[0].x += 1;
-    else if (direction == 2) snake[0].y += 1;
-    else if (direction == 3) snake[0].x -= 1;
-
-    // Sicherstellen, dass die Schlange innerhalb der Arena bleibt
-    if (snake[0].x < 0) snake[0].x = 0;
-    else if (snake[0].x >= gb::arenaWidth) snake[0].x = gb::arenaWidth - 1;
-    if (snake[0].y < 0) snake[0].y = 0;
-    else if (snake[0].y >= gb::arenaHeight) snake[0].y = gb::arenaHeight - 1;
-}
-
-void Game::generateFruit()
-{
-    // Sicherstellen, dass die Frucht nicht auf der Schlange erscheint
-    bool validPosition = false;
-    while (!validPosition)
-    {
-        fruit.x = rand() % gb::arenaWidth;
-        fruit.y = rand() % gb::arenaHeight;
-
-        validPosition = true;
-        for (const auto& segment : snake)
-        {
-            if (segment.x == fruit.x && segment.y == fruit.y)
-            {
-                validPosition = false;
-                break;
-            }
-        }
-    }
-}
-
-bool Game::checkCollision()
-{
-    // Kollision mit den Arena-Grenzen
-    if (snake.front().x < 0 || snake.front().x >= gb::arenaWidth || snake.front().y < 0 || snake.front().y >= gb::arenaHeight)
-    {
-        return true;
-    }
-
-    // Kollision mit sich selbst
-    for (int i = 1; i < snake.size(); ++i)
-    {
-        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void Game::saveScore() {
-    std::ofstream file("scoreboard.txt", std::ios::app);
-    if (file.is_open()) {
-        file << playerName << " " << score << "\n";
-        file.close();
-    }
-}
+#endif
