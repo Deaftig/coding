@@ -1,34 +1,3 @@
-/*
-
-SnakeGame/
-|
-|>main.cpp
-|   |>menu.h
-|   |>game.h
-|   |>scoreboard.h
-|   |>globals.h
-|
-|>menu.cpp
-|   |>menu.h
-|   |>globals.h
-|
-|>game.cpp
-|   |>game.h
-|   |>globals.h
-|
-|>scoreboard.cpp
-|   |>scoreboard.h
-|   |>globals.h
-|
-|>Fonts/
-|   |>Dimbo Regular.ttf
-|
-|>scoreboard.txt
-
-*/
-
-
-
 #include "globals.h"
 #include "menu.h"               // Inkludieren der Datei "menu.h"
 #include "game.h"               // Inkludieren der Datei "game.h"

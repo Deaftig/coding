@@ -6,7 +6,8 @@
 #include <vector>
 #include <string>
 
-class Scoreboard {
+class Scoreboard
+{
 public:
     Scoreboard();
     void render(sf::RenderWindow& window);
@@ -17,17 +18,22 @@ public:
     void clearScores();
 
 private:
-    void initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position);
-
     std::vector<std::pair<std::string, int>> scores;
     sf::Font font;
     sf::Text scoreboardText;
     sf::Text deleteText;
     sf::Text backText;
     sf::Text highscoreText;
+    std::string nameToDelete;
+
     bool displayingScores;
     bool waitingForDeleteConfirmation;
-    std::string nameToDelete;
+    int selectedItem;
+
+    void initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position);
+    void updateTextColors();
+
+
 };
 
 #endif // SCOREBOARD_H

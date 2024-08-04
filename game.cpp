@@ -5,16 +5,12 @@
 #include <fstream>
 #include <sstream>
 
-// Arena
-const int blockSize = 30;
-const int arenaWidth = 18;
-const int arenaHeight = 16;
-
 Game::Game()
     : fruit(0, 0), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
     updateInterval(10.0f), timeSinceLastUpdate(0.0f) { // Updateintervall für angepasste Geschwindigkeit
 
-    if (!font.loadFromFile("Fonts/Dimbo Regular.ttf")) {
+    if (!font.loadFromFile("Fonts/Dimbo Regular.ttf"))
+    {
         std::cerr << "Fehler beim Laden der Schriftart" << std::endl;
     }
 
@@ -26,10 +22,10 @@ Game::Game()
 
     initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5)); // Zentriert im Endspiel-Fenster
 
-    snakeShape.setSize(sf::Vector2f(blockSize, blockSize));
+    snakeShape.setSize(sf::Vector2f(gb::blockSize, gb::blockSize));
     snakeShape.setFillColor(gb::cSnake);
 
-    fruitShape.setRadius(blockSize * 0.5);
+    fruitShape.setRadius(gb::blockSize * 0.5);
     fruitShape.setFillColor(gb::cFruit);
 
     reset();
@@ -55,12 +51,12 @@ void Game::render(sf::RenderWindow& window)
         window.clear(gb::cBackground);
 
         // Arena (Chessboard) zeichnen
-        for (int y = 0; y < arenaHeight; ++y)
+        for (int y = 0; y < gb::arenaHeight; ++y)
         {
-            for (int x = 0; x < arenaWidth; ++x)
+            for (int x = 0; x < gb::arenaWidth; ++x)
             {
-                sf::RectangleShape block(sf::Vector2f(blockSize, blockSize));
-                block.setPosition((gb::winWidth - arenaWidth * blockSize) / 2 + x * blockSize, (gb::winHeight - arenaHeight * blockSize) / 1 + y * blockSize);
+                sf::RectangleShape block(sf::Vector2f(gb::blockSize, gb::blockSize));
+                block.setPosition((gb::winWidth - gb::arenaWidth * gb::blockSize) / 2 + x * gb::blockSize, (gb::winHeight - gb::arenaHeight * gb::blockSize) / 1 + y * gb::blockSize);
                 block.setFillColor((x + y) % 2 == 0 ? gb::cArena1 : gb::cArena2);
                 window.draw(block);
             }
@@ -72,12 +68,12 @@ void Game::render(sf::RenderWindow& window)
         // Zeichne die Schlange
         for (const auto& segment : snake)
         {
-            snakeShape.setPosition(segment.x * blockSize, segment.y * blockSize);
+            snakeShape.setPosition(segment.x * gb::blockSize, segment.y * gb::blockSize);
             window.draw(snakeShape);
         }
 
         // Zeichne die Frucht
-        fruitShape.setPosition((fruit.x * blockSize), (fruit.y * blockSize));
+        fruitShape.setPosition((fruit.x * gb::blockSize), (fruit.y * gb::blockSize));
         window.draw(fruitShape);
     }
 
@@ -165,7 +161,7 @@ void Game::update() {
 
 void Game::reset() {
     snake.clear();
-    snake.push_back(SnakeSegment(arenaWidth / 2, arenaHeight / 2));
+    snake.push_back(SnakeSegment(gb::arenaWidth / 2, gb::arenaHeight / 2));
     direction = 0;
     score = 0;
     scoreText.setString("Punkte: 0");
@@ -177,7 +173,8 @@ void Game::reset() {
     nameInputText.setString("Name: \n\r" + playerName);
 }
 
-void Game::initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position) {
+void Game::initText(sf::Text& text, const std::string& string, unsigned int size, sf::Color color, sf::Vector2f position)
+{
     text.setFont(font);
     text.setString(string);
     text.setCharacterSize(size);
@@ -186,8 +183,10 @@ void Game::initText(sf::Text& text, const std::string& string, unsigned int size
     text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
 }
 
-void Game::moveSnake() {
-    for (int i = snake.size() - 1; i > 0; --i) {
+void Game::moveSnake()
+{
+    for (int i = snake.size() - 1; i > 0; --i)
+    {
         snake[i] = snake[i - 1];
     }
 
@@ -198,21 +197,25 @@ void Game::moveSnake() {
 
     // Sicherstellen, dass die Schlange innerhalb der Arena bleibt
     if (snake[0].x < 0) snake[0].x = 0;
-    else if (snake[0].x >= arenaWidth) snake[0].x = arenaWidth - 1;
+    else if (snake[0].x >= gb::arenaWidth) snake[0].x = gb::arenaWidth - 1;
     if (snake[0].y < 0) snake[0].y = 0;
-    else if (snake[0].y >= arenaHeight) snake[0].y = arenaHeight - 1;
+    else if (snake[0].y >= gb::arenaHeight) snake[0].y = gb::arenaHeight - 1;
 }
 
-void Game::generateFruit() {
+void Game::generateFruit()
+{
     // Sicherstellen, dass die Frucht nicht auf der Schlange erscheint
     bool validPosition = false;
-    while (!validPosition) {
-        fruit.x = rand() % arenaWidth;
-        fruit.y = rand() % arenaHeight;
+    while (!validPosition)
+    {
+        fruit.x = rand() % gb::arenaWidth;
+        fruit.y = rand() % gb::arenaHeight;
 
         validPosition = true;
-        for (const auto& segment : snake) {
-            if (segment.x == fruit.x && segment.y == fruit.y) {
+        for (const auto& segment : snake)
+        {
+            if (segment.x == fruit.x && segment.y == fruit.y)
+            {
                 validPosition = false;
                 break;
             }
@@ -220,15 +223,19 @@ void Game::generateFruit() {
     }
 }
 
-bool Game::checkCollision() {
+bool Game::checkCollision()
+{
     // Kollision mit den Arena-Grenzen
-    if (snake.front().x < 0 || snake.front().x >= arenaWidth || snake.front().y < 0 || snake.front().y >= arenaHeight) {
+    if (snake.front().x < 0 || snake.front().x >= gb::arenaWidth || snake.front().y < 0 || snake.front().y >= gb::arenaHeight)
+    {
         return true;
     }
 
     // Kollision mit sich selbst
-    for (int i = 1; i < snake.size(); ++i) {
-        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+    for (int i = 1; i < snake.size(); ++i)
+    {
+        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y)
+        {
             return true;
         }
     }

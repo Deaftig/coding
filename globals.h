@@ -24,6 +24,11 @@ namespace gb
 	// Fenstergröße
 	const int winWidth = 600;
 	const int winHeight = 600;
+
+	// Arena
+	const int blockSize = 30;
+	const int arenaWidth = 18;
+	const int arenaHeight = 16;
 }
 
 #endif
