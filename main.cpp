@@ -39,7 +39,6 @@ SnakeGame/
 // Hauptschleife
 void main()
 {
-
     // Erzeugen des Fensters
     sf::RenderWindow window(sf::VideoMode(gb::winWidth, gb::winHeight), "SNAKE by LUMALU", sf::Style::None);
 

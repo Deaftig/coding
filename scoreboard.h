@@ -23,6 +23,7 @@ private:
     sf::Font font;
     sf::Text scoreboardText;
     sf::Text deleteText;
+    sf::Text backText;
     sf::Text highscoreText;
     bool displayingScores;
     bool waitingForDeleteConfirmation;

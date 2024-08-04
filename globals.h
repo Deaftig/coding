@@ -19,7 +19,7 @@ namespace gb
 	const sf::Color cArena1(188, 206, 244, 255);
 	const sf::Color cArena2(173, 195, 239, 255);
 	//Schatten
-	const sf::Color cShade(50, 50, 50, 10);
+	const sf::Color cShade(20, 20, 20, 10);
 
 	// Fenstergröße
 	const int winWidth = 600;

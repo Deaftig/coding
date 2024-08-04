@@ -11,7 +11,7 @@ const int arenaWidth = 18;
 const int arenaHeight = 16;
 
 Game::Game()
-    : fruit(-1, -1), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
+    : fruit(0, 0), score(0), direction(0), isPlaying(false), gameOver(false), enteringName(true), playerName(""), lastPlayerName(""),
     updateInterval(10.0f), timeSinceLastUpdate(0.0f) { // Updateintervall für angepasste Geschwindigkeit
 
     if (!font.loadFromFile("Fonts/Dimbo Regular.ttf")) {
@@ -21,15 +21,15 @@ Game::Game()
     // Korrigierte Position für den Punktestand
     initText(scoreText, "Punkte: 0", 30, gb::cTextOn, sf::Vector2f(50, 10));
 
-    initText(nameInputText, "Name: \n\r", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Namenseingabe-Fenster
-    initText(nameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2));
+    initText(nameInputText, "Name: \n\r", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5)); // Zentriert im Namenseingabe-Fenster
+    initText(nameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5));
 
-    initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth / 2, gb::winHeight / 2)); // Zentriert im Endspiel-Fenster
+    initText(endGameText, "", 30, gb::cTextOn, sf::Vector2f(gb::winWidth * 0.5, gb::winHeight * 0.5)); // Zentriert im Endspiel-Fenster
 
     snakeShape.setSize(sf::Vector2f(blockSize, blockSize));
     snakeShape.setFillColor(gb::cSnake);
 
-    fruitShape.setRadius(blockSize / 2);
+    fruitShape.setRadius(blockSize * 0.5);
     fruitShape.setFillColor(gb::cFruit);
 
     reset();
@@ -60,7 +60,7 @@ void Game::render(sf::RenderWindow& window)
             for (int x = 0; x < arenaWidth; ++x)
             {
                 sf::RectangleShape block(sf::Vector2f(blockSize, blockSize));
-                block.setPosition((gb::winWidth - arenaWidth * blockSize) / 2 + x * blockSize, (gb::winHeight - arenaHeight * blockSize) / 2 + y * blockSize);
+                block.setPosition((gb::winWidth - arenaWidth * blockSize) / 2 + x * blockSize, (gb::winHeight - arenaHeight * blockSize) / 1 + y * blockSize);
                 block.setFillColor((x + y) % 2 == 0 ? gb::cArena1 : gb::cArena2);
                 window.draw(block);
             }
@@ -150,7 +150,7 @@ void Game::update() {
             gameOver = true;
             isPlaying = false;
             saveScore();
-            endGameText.setString("Spiel beendet! " + playerName + ": " + std::to_string(score) + " Punkte\nDrücke Enter zum Neustart oder Escape zum Verlassen");
+            endGameText.setString("Spiel beendet!\n\r " + playerName + ": " + std::to_string(score) + " Punkte \n\r Drücke Enter zum Neustart oder Escape zum Verlassen");
             endGameText.setOrigin(endGameText.getLocalBounds().width / 2, endGameText.getLocalBounds().height / 2);
         }
 
