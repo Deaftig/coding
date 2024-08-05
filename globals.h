@@ -1,7 +1,8 @@
-#ifndef GLOBALS.H
-#define GLOBALS.H
+#ifndef globals_h
+#define globals_h
 
-#include "bib.h"
+// SFML-Bibliothek
+#include <SFML/Graphics.hpp>
 
 namespace gb
 {
