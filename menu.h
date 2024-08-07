@@ -3,6 +3,7 @@
 
 class menu
 {
+
 };
 
 #endif

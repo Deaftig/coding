@@ -15,6 +15,7 @@ void engine::input()
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 				window.close();
+			break;
 		}
 	}
 }
@@ -26,7 +27,7 @@ void engine::update()
 
 void engine::render()
 {
-	window.clear(gb::colBackground);
+	window.clear(gb::colBackground); // just for testing, still need a switch, which state is to be rendered
 	window.display();
 }
 
