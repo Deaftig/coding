@@ -4,33 +4,24 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "game.h"
-#include "globals.h"
 #include "menu.h"
 #include "scoreboard.h"
 
-class Engine {
+class engine
+{
 private:
-    sf::RenderWindow window;
-    sf::Event event;
+	sf::RenderWindow window;
+	sf::Event event;
 
-    enum GameState { stateMenu = 0, stateGameplay = 1, stateScoreboard = 2 };
-    GameState gameState;
+	void initWindow();
 
-    void initVariables();
-    void initWindow();
-    void initInput();
-
-    void handleInput();
-    void update();
-    void render();
-
-    Menu menu;
-    Game game;
-    Scoreboard scoreboard;
+	void input();
+	void update();
+	void render();
 
 public:
-    Engine();
-    void run();
+	engine();
+	void run();
 };
 
-#endif // ENGINE_H
+#endif

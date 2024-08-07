@@ -1,11 +1,9 @@
-// header-Dateien
+// Header-Dateien
 #include "engine.h"
 
-
-
-	void main()
-	{
-		Engine engine;
-		engine.run();
-	};
-
+int main()
+{
+    engine engine;
+    engine.run();
+    return 0;
+}
