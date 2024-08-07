@@ -26,7 +26,8 @@ void engine::update()
 
 void engine::render()
 {
-	window.clear();
+	window.clear(gb::colBackground);
+	window.display();
 }
 
 // Public
